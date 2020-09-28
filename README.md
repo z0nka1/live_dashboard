@@ -1,2 +1,20 @@
-# live_dashboard
-一个操作简便的篮球文字直播控制台！
+使用技术：Vue2.0,WebSocket
+
+## How to run
+
+Install dependencies first:
+```
+yarn
+```
+or
+```
+npm install
+```
+then run with
+```
+yarn serve
+```
+or
+```
+npm run serve
+```
