@@ -1,4 +1,4 @@
-使用技术：Vue2.0,WebSocket
+Built with：Vue2.0,WebSocket
 
 ## How to run
 
