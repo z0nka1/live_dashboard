@@ -3,53 +3,111 @@
     <section class="flex">
       <div class="flex section-title">技术统计</div>
       <div class="flex item-box">
-        <div class="commom-item">二分球</div>
-        <div class="commom-item">三分球</div>
-        <div class="commom-item">篮板球</div>
-        <div class="commom-item">助攻</div>
-        <div class="commom-item">抢断</div>
-        <div class="commom-item">封盖</div>
+        <div
+          v-for="(tech, idx) in techList"
+          :key="tech.text"
+          :class="[{ 'selected': tech.isSelected }, 'commom-item']"
+          @click="itemClick(techList, idx)"
+        >
+          {{ tech.text }}
+        </div>
       </div>
     </section>
     <section class="flex">
       <div class="flex section-title">犯规</div>
       <div class="flex item-box">
-        <div class="commom-item">打手</div>
-        <div class="commom-item">拉人</div>
-        <div class="commom-item">带球撞人</div>
+        <div
+          v-for="(foul, idx) in foulList"
+          :key="foul.text"
+          :class="[{ 'selected': foul.isSelected }, 'commom-item']"
+          @click="itemClick(foulList, idx)"
+        >
+          {{ foul.text }}
+        </div>
       </div>
     </section>
     <section class="flex">
       <div class="flex section-title">违例</div>
       <div class="flex item-box">
-        <div class="commom-item">脚踢球</div>
-        <div class="commom-item">二运</div>
+        <div
+          v-for="(offence, idx) in offenceList"
+          :key="offence.text"
+          :class="[{ 'selected': offence.isSelected }, 'commom-item']"
+          @click="itemClick(offenceList, idx)"
+        >
+          {{ offence.text }}
+        </div>
       </div>
     </section>
     <section class="flex">
-      <div class="flex section-title">暂停</div>
+      <div class="flex section-title">主队</div>
       <div class="flex item-box">
-        <div class="commom-item">请求暂停</div>
+        <div
+          v-for="(player, idx) of homeTeam"
+          :key="player.text"
+          :class="[{ 'selected': player.isSelected }, 'commom-item']"
+          @click="itemClick(homeTeam, idx)"
+        >
+          {{ player.text }}
+        </div>
       </div>
     </section>
     <section class="flex">
-      <div class="flex section-title">人员</div>
+      <div class="flex section-title">客队</div>
       <div class="flex item-box">
-        <div class="commom-item" v-for="player of players" :key="player">{{ player }}</div>
+        <div
+          v-for="(player, idx) of guestTeam"
+          :key="player.text"
+          :class="[{ 'selected': player.isSelected }, 'commom-item']"
+          @click="itemClick(guestTeam, idx)"
+        >
+          {{ player.text }}
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import { EventBus } from './../utils/EventBus';
+import { defaultTech, defaultFoul, defaultOffence, homeTeam, guestTeam } from './../mock/mockData';
+
+const keys = ['techList', 'foulList', 'offenceList', 'homeTeam', 'guestTeam'];
+
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   data() {
     return {
-      players: ['詹姆斯', '戴维斯', '隆多', '霍华德']
+      techList: [...defaultTech],
+      foulList: [...defaultFoul],
+      offenceList: [...defaultOffence],
+      homeTeam: [...homeTeam],
+      guestTeam: [...guestTeam]
+    };
+  },
+  methods: {
+    itemClick(list, idx) {
+      if (list[idx].isSelected) return;
+      list.forEach(item => {
+        item.isSelected = false;
+      });
+      list[idx].isSelected = true;
+      EventBus.$emit('itemClick', list[idx].value || list[idx].text);
+    },
+    refresh() {
+      keys.forEach(key => {
+        this[key].forEach(item => {
+          item.isSelected = false;
+        });
+      });
     }
+  },
+  mounted() {
+    EventBus.$on('refresh', () => {
+      this.refresh();
+    })
   }
-}
+};
 </script>
 
 <style scoped>
@@ -77,11 +135,15 @@ section {
   padding: 8px 12px;
   border-radius: 20px;
   cursor: pointer;
-  background: #42b983;
-  color: white;
+  border: 1px solid #42b983;
   min-width: 72px;
   text-align: center;
   margin-bottom: 8px;
+}
+
+.commom-item.selected {
+  background: #42b983;
+  color: white;
 }
 
 .commom-item:not(:last-child) {
